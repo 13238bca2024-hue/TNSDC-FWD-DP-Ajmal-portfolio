@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple HTML Toolbox</title>
+  <style>
+    :root{
+      --bg: #0f1724;
+      --card: #111827;
+      --accent: #7dd3fc;
+      --muted: #94a3b8;
+      --glass: rgba(255,255,255,0.03);
+      font-family: Arial, sans-serif;
+    }
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#071024 0%, #0f1724 100%);
+      color:#e6eef8;
+    }
+    .wrap{max-width:980px;margin:28px auto;padding:20px;}
+    header h1{margin:0;font-size:22px;color:var(--accent);}
+    header p{margin:5px 0 20px;color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:14px;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+    }
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input, textarea{
+      width:100%;padding:8px 10px;margin-bottom:10px;
+      border-radius:8px;border:none;
+      background:var(--glass);color:var(--accent);
+    }
+    button{
+      padding:8px 12px;border:none;border-radius:8px;
+      background:var(--accent);color:#02202b;font-weight:bold;
+      cursor:pointer;margin-right:6px;
+    }
+    button:hover{opacity:0.9;}
+    .result{
+      margin-top:8px;padding:8px;
+      background:rgba(255,255,255,0.05);
+      border-radius:8px;font-size:14px;
+    }
+    footer{margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Simple HTML Toolbox</h1>
+      <p>Calculator • Palindrome Checker • Text Tools</p>
+    </header>
+
+    <div class="grid">
+      <!-- Calculator -->
+      <div class="card">
+        <h3>Calculator</h3>
+        <label for="calc-input">Enter expression</label>
+        <input id="calc-input" type="text" placeholder="e.g. 12+3*2" />
+        <button onclick="evaluateCalc()">Evaluate</button>
+        <button onclick="clearCalc()">Clear</button>
+        <div id="calc-result" class="result">Result will appear here.</div>
+      </div>
+
+      <!-- Palindrome Checker -->
+      <div class="card">
+        <h3>Palindrome Checker</h3>
+        <label for="pal-input">Type text</label>
+        <input id="pal-input" type="text" placeholder="e.g. racecar" />
+        <button onclick="checkPalindrome()">Check</button>
+        <button onclick="clearPalindrome()">Clear</button>
+        <div id="pal-result" class="result">Enter text and press Check.</div>
+      </div>
+
+      <!-- Text Tools -->
+      <div class="card">
+        <h3>Text Tools</h3>
+        <label for="text-area">Paste or type text</label>
+        <textarea id="text-area" rows="5"></textarea>
+        <button onclick="toUpper()">UPPER</button>
+        <button onclick="toLower()">lower</button>
+        <button onclick="toTitle()">Title Case</button>
+        <button onclick="countWords()">Count</button>
+        <div id="text-result" class="result">Words: 0 • Characters: 0</div>
+      </div>
+    </div>
+
+    <footer>Simple tools — edit freely. Save this file and open in browser to run.</footer>
+  </div>
+
+  <script>
+    // Calculator
+    function evaluateCalc(){
+      let input = document.getElementById('calc-input').value;
+      let res = document.getElementById('calc-result');
+      try{
+        if(!/^[0-9+\-*/().\s%]+$/.test(input)){
+          res.textContent = "Invalid input!";
+          return;
+        }
+        res.textContent = Function('"use strict";return ('+input+')')();
+      }catch{res.textContent="Error";}
+    }
+    function clearCalc(){
+      document.getElementById('calc-input').value="";
+      document.getElementById('calc-result').textContent="Result will appear here.";
+    }
+
+    // Palindrome
+    function checkPalindrome(){
+      let txt=document.getElementById('pal-input').value;
+      let res=document.getElementById('pal-result');
+      let clean=txt.toLowerCase().replace(/[^a-z0-9]/g,'');
+      let rev=clean.split('').reverse().join('');
+      if(clean && clean===rev) res.textContent="✅ Palindrome";
+      else res.textContent="❌ Not a palindrome";
+    }
+    function clearPalindrome(){
+      document.getElementById('pal-input').value="";
+      document.getElementById('pal-result').textContent="Enter text and press Check.";
+    }
+
+    // Text Tools
+    function toUpper(){let a=document.getElementById('text-area');a.value=a.value.toUpperCase();countWords();}
+    function toLower(){let a=document.getElementById('text-area');a.value=a.value.toLowerCase();countWords();}
+    function toTitle(){let a=document.getElementById('text-area');a.value=a.value.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');countWords();}
+    function countWords(){
+      let txt=document.getElementById('text-area').value.trim();
+      let words=txt?txt.split(/\s+/).length:0;
+      let chars=txt.length;
+      document.getElementById('text-result').textContent=`Words: ${words} • Characters: ${chars}`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe | Ajmal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      margin: 0;
+    }
+    h1 { color: red; margin-bottom: 20px; font-size: 2.5rem; }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+    .cell {
+      background: #fff;
+      border-radius: 10px;
+      font-size: 2.5rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .cell:hover { background: #f1f1f1; }
+    .winner { background: #4caf50 !important; color: white; }
+    #status { margin-top: 15px; font-size: 1.2rem; font-weight: bold; color: #fff; }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #ff4081;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #e73370; }
+  </style>
+</head>
+<body>
+  <h1>Multiplayer Tic Tac Toe</h1>
+  <div class="game-container">
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <div id="status">Player X's turn</div>
+    <button onclick="resetGame()">Restart</button>
+  </div>
+
+  <script>
+    const cells = document.querySelectorAll(".cell");
+    const statusText = document.getElementById("status");
+    let currentPlayer = "X";
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let gameActive = true;
+
+    const winningConditions = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    cells.forEach(cell => cell.addEventListener("click", cellClicked));
+
+    function cellClicked() {
+      const index = this.getAttribute("data-index");
+      if (board[index] !== "" || !gameActive) return;
+      board[index] = currentPlayer;
+      this.textContent = currentPlayer;
+      checkWinner();
+    }
+
+    function checkWinner() {
+      let roundWon = false;
+      for (let condition of winningConditions) {
+        const [a, b, c] = condition;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          roundWon = true;
+          document.querySelector(`[data-index='${a}']`).classList.add("winner");
+          document.querySelector(`[data-index='${b}']`).classList.add("winner");
+          document.querySelector(`[data-index='${c}']`).classList.add("winner");
+          break;
+        }
+      }
+      if (roundWon) {
+        statusText.textContent = `🎉 Player ${currentPlayer} Wins!`;
+        gameActive = false;
+        return;
+      }
+      if (!board.includes("")) {
+        statusText.textContent = "It's a Draw!";
+        gameActive = false;
+        return;
+      }
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      statusText.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    function resetGame() {
+      currentPlayer = "X";
+      board = ["", "", "", "", "", "", "", "", ""];
+      gameActive = true;
+      statusText.textContent = "Player X's turn";
+      cells.forEach(cell => {
+        cell.textContent = "";
+        cell.classList.remove("winner");
+      });
+    }
+  </script>
+</body>
+</html>
